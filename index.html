@@ -153,9 +153,8 @@
             padding: 1rem;
             margin-top: 0.5rem;
             border-radius: 5px;
-            /* ZMIANA 1: Usunięto max-height i overflow, aby pozbyć się podwójnego scrolla */
-            /* ZMIANA 2: Zmniejszono bazową czcionkę dla wyników */
-            font-size: 0.85rem; 
+            /* ZMIANA 1: Ponowne zmniejszenie czcionki dla większej zwartości */
+            font-size: 0.8rem; 
             line-height: 1.5;
         }
 
@@ -164,8 +163,8 @@
         .numbers { 
             font-family: monospace; 
             color: #0066cc; 
-            /* ZMIANA 3: Lekko zmniejszono czcionkę numerów, aby pasowała do reszty */
-            font-size: 0.9rem; 
+            /* ZMIANA 2: Dostosowanie rozmiaru czcionki numerów */
+            font-size: 0.85rem; 
         }
         .hit-count { font-weight: bold; color: var(--success-color); }
         
@@ -225,9 +224,9 @@
                     <label for="numDraws">Liczba losowań:</label>
                     <input type="number" id="numDraws" min="1" max="1000000000" value="156">
                     
+                    <!-- ZMIANA 3: Usunięto przycisk "Wyczyść wyniki" -->
                     <div class="button-group">
                         <button id="drawButton" disabled>Losuj</button>
-                        <button id="clearResultsButton" class="button-danger">Wyczyść wyniki</button>
                     </div>
                     <button id="drawUntil6Button" disabled style="margin-top: 0.5rem;">Losuj aż trafisz główną wygraną</button>
                 </div>
