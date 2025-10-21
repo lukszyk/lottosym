@@ -1,234 +1,238 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Symulator Lotto/Eurojackpot</title>
     <style>
+        /* --- General styles --- */
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0069d9;
+            --danger-color: #dc3545;
+            --danger-hover: #c82333;
+            --success-color: #28a745;
+            --secondary-color: #6c757d;
+            --secondary-hover: #5a6268;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --bg-light: #f8f9fa;
+            --border-color: #ddd;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
             margin: 0;
-            padding: 10px;
+            padding: 1rem;
             display: flex;
             justify-content: center;
             min-height: 100vh;
+            font-size: 16px;
         }
+        
         #main-container {
             background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 12px;
-            width: 900px;
-            max-width: 100%;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-sizing: border-box;
         }
+
+        /* --- NOWY STYL: Ukrywanie widoku wyników domyślnie --- */
+        #results-view {
+            display: none;
+        }
+
+        /* --- Typography & Headers --- */
+        h1, h2 {
+            text-align: center;
+            color: var(--text-primary);
+            margin: 0.5rem 0 1rem 0;
+        }
+        h1 { font-size: 1.5rem; }
+        h2 { font-size: 1.2rem; }
+
+        .game-rules {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        /* --- Buttons --- */
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.6rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-radius: 5px;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        .button-danger { background-color: var(--danger-color); }
+        .button-danger:hover { background-color: var(--danger-hover); }
+        
+        .button-secondary { background-color: var(--secondary-color); }
+        .button-secondary:hover { background-color: var(--secondary-hover); }
+
         .game-switcher {
             display: flex;
             justify-content: center;
-            margin-bottom: 8px;
-            gap: 5px;
+            margin-bottom: 1rem;
+            gap: 0.5rem;
         }
         .game-switcher button {
-            padding: 6px 10px;
-            font-size: 0.85em;
-            border-radius: 4px;
-            flex: 1;
+            background-color: #e9ecef;
+            color: var(--text-primary);
+            font-weight: normal;
         }
         .game-switcher .active {
-            background-color: #28a745;
+            background-color: var(--success-color);
+            color: white;
+            font-weight: bold;
         }
-        h1 {
-            font-size: 1.3em;
-            margin: 5px 0;
-            text-align: center;
-            color: #333;
-        }
-        .game-rules {
-            font-size: 0.75em;
-            margin-bottom: 8px;
-            text-align: center;
-            color: #666;
-        }
-        .control-panel {
+        .button-group {
             display: flex;
-            gap: 12px;
-            margin-bottom: 12px;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
         }
-        .control-column {
-            flex: 1;
-        }
-        .sets-column {
-            width: 240px;
-        }
+
+        /* --- Forms & Inputs --- */
         label {
             display: block;
-            font-size: 0.75em;
-            margin-top: 6px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
             color: #555;
+            font-weight: bold;
         }
         input[type="number"], 
         input[type="text"], 
         select {
             width: 100%;
-            padding: 7px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-            margin: 2px 0 8px 0;
+            padding: 0.6rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            margin-top: 0.25rem;
             box-sizing: border-box;
-            font-size: 0.85em;
+            font-size: 1rem;
         }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 7px;
-            font-size: 0.85em;
-            border-radius: 3px;
-            margin: 6px 0;
-            width: 100%;
-            cursor: pointer;
+
+        /* --- Layout --- */
+        .control-panel {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
-        button:hover {
-            background-color: #0069d9;
-        }
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        .button-danger {
-            background-color: #dc3545;
-        }
-        .button-danger:hover {
-            background-color: #c82333;
-        }
-        .button-group {
-            display: flex;
-            gap: 5px;
-            margin: 6px 0;
-        }
-        .button-group button {
-            margin: 0;
-        }
-        #generatedSets {
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            max-height: 275px;
+
+        /* --- Result & Sets Areas --- */
+        #generatedSets, #results {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
             overflow-y: auto;
-            padding: 8px;
-            margin: 6px 0;
-            border-radius: 3px;
-            font-size: 0.8em;
-            line-height: 1.4;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
-        #results {
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            max-height: 1250px;
-            overflow-y: auto;
-            padding: 12px;
-            margin-top: 10px;
-            border-radius: 3px;
-            font-size: 0.8em;
-            line-height: 1.4;
-        }
-        .highlight {
-            color: #d9534f;
-            font-weight: bold;
-        }
-        .numbers {
-            font-family: monospace;
-            color: #0066cc;
-        }
-        .hit-count {
-            font-weight: bold;
-            color: #28a745;
-        }
+        #generatedSets { max-height: 320px; }
+        #results { max-height: 90vh; } /* Zwiększona wysokość, bo to główny element widoku */
+
+        /* --- Result Highlighting --- */
+        .highlight { color: var(--danger-color); font-weight: bold; }
+        .numbers { font-family: monospace; color: #0066cc; font-size: 1rem; }
+        .hit-count { font-weight: bold; color: var(--success-color); }
+        
         .simulation-summary {
             background-color: #e9f7ef;
-            padding: 8px;
-            border-radius: 3px;
-            margin-bottom: 10px;
-            font-size: 0.85em;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
         }
-        .prize-tier {
-            margin-bottom: 5px;
-            padding-bottom: 5px;
-            border-bottom: 1px dotted #ddd;
-            font-size: 0.85em;
-        }
+        
+        /* --- MEDIA QUERY FOR MOBILE --- */
         @media (max-width: 768px) {
-            .control-panel {
-                flex-direction: column;
-            }
-            .sets-column {
-                width: auto;
-            }
+            body { padding: 0.5rem; font-size: 14px; }
+            #main-container { padding: 0.75rem; }
+            .control-panel { grid-template-columns: 1fr; gap: 1rem; }
+            .sets-column { margin-top: 1rem; }
+            #generatedSets { max-height: 200px; }
         }
     </style>
 </head>
 <body>
     <div id="main-container">
-        <div class="game-switcher">
-            <button id="switchLotto" class="active">LOTTO</button>
-            <button id="switchEurojackpot">EUROJACKPOT</button>
-        </div>
-        
-        <h1 id="gameTitle">Symulator Lotto</h1>
-        <div class="game-rules" id="gameRules">6 liczb z 49</div>
-        
-        <div class="control-panel">
-            <div class="control-column">
-                <label for="numSets">Liczba zestawów:</label>
-                <input type="number" id="numSets" min="1" max="1000" value="1">
-                
-                <div class="button-group">
-                    <button id="clearSetsButton" class="button-danger">Wyczyść zestawy</button>
-                    <button id="generateSetsButton">Generuj zestawy</button>
-                </div>
-                
-                <label for="userNumbers">Twój zestaw (oddziel przecinkami):</label>
-                <input type="text" id="userNumbers" placeholder="np. 5, 12, 18, 24, 35, 42">
-                <button id="ownSetsButton">Dodaj własne</button>
-                
-                <div class="row">
-                    <label for="drawYears">Liczba lat losowań:</label>
+
+        <!-- WIDOK 1: USTAWIENIA (widoczny domyślnie) -->
+        <div id="settings-view">
+            <div class="game-switcher">
+                <button id="switchLotto" class="active">LOTTO</button>
+                <button id="switchEurojackpot">EUROJACKPOT</button>
+            </div>
+            
+            <h1 id="gameTitle">Symulator Lotto</h1>
+            <div class="game-rules" id="gameRules">6 liczb z 49</div>
+            
+            <div class="control-panel">
+                <div class="control-column">
+                    <label for="numSets">Liczba zestawów do wygenerowania:</label>
+                    <input type="number" id="numSets" min="1" max="1000" value="1">
+                    <div class="button-group">
+                        <button id="generateSetsButton">Generuj losowe</button>
+                        <button id="clearSetsButton" class="button-danger">Wyczyść zestawy</button>
+                    </div>
+                    
+                    <label for="userNumbers">Twój zestaw (oddziel przecinkami):</label>
+                    <input type="text" id="userNumbers" placeholder="np. 5, 12, 18, 24, 35, 42">
+                    <button id="ownSetsButton" style="margin-top: 0.5rem;">Dodaj własny zestaw</button>
+                    
+                    <label for="drawYears">Okres symulacji:</label>
                     <select id="drawYears">
-                        <option value="custom">Własna liczba</option>
+                        <option value="custom">Własna liczba losowań</option>
                         <option value="1">1 rok</option>
                         <option value="10">10 lat</option>
-                        <option value="50">50 lat</option>
                         <option value="100">100 lat</option>
                         <option value="1000">1000 lat</option>
-                        <option value="10000">10000 lat</option>
+                        <option value="10000">10 000 lat</option>
                     </select>
 
                     <label for="numDraws">Liczba losowań:</label>
-                    <input type="number" id="numDraws" min="1" max="1000000000" value="100">
+                    <input type="number" id="numDraws" min="1" max="1000000000" value="156">
+                    
+                    <div class="button-group">
+                        <button id="drawButton" disabled>Losuj</button>
+                        <button id="clearResultsButton" class="button-danger">Wyczyść wyniki</button>
+                    </div>
+                    <button id="drawUntil6Button" disabled style="margin-top: 0.5rem;">Losuj aż trafisz główną wygraną</button>
                 </div>
-
-                <style>
-                    .row {
-                        display: flex;
-                        gap: 10px;
-                        align-items: center;
-                    }
-                </style>
                 
-                <div class="button-group">
-                    <button id="drawButton" disabled>Losuj</button>
-                    <button id="clearResultsButton" class="button-danger">Wyczyść wyniki</button>
+                <div class="control-column sets-column">
+                    <h2>Wprowadzone zestawy:</h2>
+                    <div id="generatedSets"></div>
                 </div>
-                <button id="drawUntil6Button" disabled>Losuj aż trafisz główną wygraną</button>
-            </div>
-            
-            <div class="control-column sets-column">
-                <h2 style="font-size:1.1em;margin:5px 0;">Wylosowane zestawy:</h2>
-                <div id="generatedSets"></div>
             </div>
         </div>
-        
-        <h2 style="font-size:1.1em;margin:5px 0;">Wyniki symulacji:</h2>
-        <div id="results"></div>
+
+        <!-- WIDOK 2: WYNIKI (ukryty domyślnie) -->
+        <div id="results-view">
+            <h2>Wyniki symulacji:</h2>
+            <div id="results"></div>
+            <button id="backToSettingsButton" class="button-secondary" style="margin-top: 1rem;">Powrót do ustawień</button>
+        </div>
+
     </div>
+    
     <script src="lotto.js"></script>
 </body>
 </html>
