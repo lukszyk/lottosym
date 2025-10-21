@@ -81,11 +81,11 @@ document.addEventListener("DOMContentLoaded", () => {
         resultsContainer: document.getElementById("results"),
         setsContainer: document.getElementById("generatedSets"),
         ownSetsButton: document.getElementById("ownSetsButton"),
-        clearResultsButton: document.getElementById("clearResultsButton"),
+        // ZMIANA 1: Usunięto referencję do przycisku clearResultsButton
         clearSetsButton: document.getElementById("clearSetsButton"),
         userNumbersInput: document.getElementById("userNumbers"),
 
-        // Nowe elementy do zarządzania widokami
+        // Elementy do zarządzania widokami
         settingsView: document.getElementById("settings-view"),
         resultsView: document.getElementById("results-view"),
         backToSettingsButton: document.getElementById("backToSettingsButton")
@@ -101,17 +101,16 @@ document.addEventListener("DOMContentLoaded", () => {
         updateGameUI();
     }
     
-    // Nowe funkcje do zmiany widoku
     function showSettingsView() {
         elements.resultsView.style.display = 'none';
         elements.settingsView.style.display = 'block';
-        clearResults(); // Czyścimy wyniki przy powrocie, aby nie zostały w pamięci
+        clearResults(); 
     }
 
     function showResultsView() {
         elements.settingsView.style.display = 'none';
         elements.resultsView.style.display = 'block';
-        window.scrollTo(0, 0); // Przewiń na górę strony z wynikami
+        window.scrollTo(0, 0);
     }
 
     function setupEventListeners() {
@@ -124,12 +123,12 @@ document.addEventListener("DOMContentLoaded", () => {
         elements.ownSetsButton.addEventListener("click", addCustomSet);
         elements.drawButton.addEventListener("click", simulateDraws);
         elements.drawUntil6Button.addEventListener("click", simulateUntilJackpot);
-        elements.clearResultsButton.addEventListener("click", clearResults);
+        // ZMIANA 2: Usunięto listener dla clearResultsButton
         elements.clearSetsButton.addEventListener("click", clearSets);
         elements.drawYearsSelect.addEventListener("change", handleYearsChange);
         elements.numDrawsInput.addEventListener("input", handleDrawsInput);
 
-        // Nowy listener dla przycisku powrotu
+        // Listener dla przycisku powrotu
         elements.backToSettingsButton.addEventListener("click", showSettingsView);
     }
 
@@ -514,7 +513,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         elements.resultsContainer.innerHTML = html;
-        showResultsView(); // Przełącz na widok wyników
+        showResultsView();
     }
 
     function showJackpotResults(results, timeMs, setsCount) {
@@ -562,7 +561,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         elements.resultsContainer.innerHTML = html;
-        showResultsView(); // Przełącz na widok wyników
+        showResultsView();
     }
 
     function getSets() {
