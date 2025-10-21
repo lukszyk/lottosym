@@ -83,7 +83,12 @@ document.addEventListener("DOMContentLoaded", () => {
         ownSetsButton: document.getElementById("ownSetsButton"),
         clearResultsButton: document.getElementById("clearResultsButton"),
         clearSetsButton: document.getElementById("clearSetsButton"),
-        userNumbersInput: document.getElementById("userNumbers")
+        userNumbersInput: document.getElementById("userNumbers"),
+
+        // Nowe elementy do zarządzania widokami
+        settingsView: document.getElementById("settings-view"),
+        resultsView: document.getElementById("results-view"),
+        backToSettingsButton: document.getElementById("backToSettingsButton")
     };
 
     let currentGame = games.lotto;
@@ -95,13 +100,26 @@ document.addEventListener("DOMContentLoaded", () => {
         setupEventListeners();
         updateGameUI();
     }
+    
+    // Nowe funkcje do zmiany widoku
+    function showSettingsView() {
+        elements.resultsView.style.display = 'none';
+        elements.settingsView.style.display = 'block';
+        clearResults(); // Czyścimy wyniki przy powrocie, aby nie zostały w pamięci
+    }
+
+    function showResultsView() {
+        elements.settingsView.style.display = 'none';
+        elements.resultsView.style.display = 'block';
+        window.scrollTo(0, 0); // Przewiń na górę strony z wynikami
+    }
 
     function setupEventListeners() {
         // Przełączanie gier
         elements.switchLotto.addEventListener("click", () => switchGame(games.lotto));
         elements.switchEurojackpot.addEventListener("click", () => switchGame(games.eurojackpot));
 
-        // Generowanie zestawów
+        // Generowanie zestawów i symulacje
         elements.generateSetsButton.addEventListener("click", generateSets);
         elements.ownSetsButton.addEventListener("click", addCustomSet);
         elements.drawButton.addEventListener("click", simulateDraws);
@@ -110,6 +128,9 @@ document.addEventListener("DOMContentLoaded", () => {
         elements.clearSetsButton.addEventListener("click", clearSets);
         elements.drawYearsSelect.addEventListener("change", handleYearsChange);
         elements.numDrawsInput.addEventListener("input", handleDrawsInput);
+
+        // Nowy listener dla przycisku powrotu
+        elements.backToSettingsButton.addEventListener("click", showSettingsView);
     }
 
     function switchGame(game) {
@@ -129,14 +150,13 @@ document.addEventListener("DOMContentLoaded", () => {
         elements.drawUntil6Button.textContent = `Losuj aż trafisz ${currentGame === games.lotto ? "6" : "5+2"}`;
     }
 
-    // Funkcje główne
     function generateSets() {
         clearResults();
         clearSets();
 
         const numSets = parseInt(elements.numSetsInput.value);
         if (numSets < 1 || numSets > 1000) {
-            addResult("Podaj liczbę zestawów od 1 do 1000.");
+            alert("Podaj liczbę zestawów od 1 do 1000.");
             return;
         }
 
@@ -151,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function addCustomSet() {
         const numbers = elements.userNumbersInput.value.trim();
         if (!numbers) {
-            addResult("Wprowadź liczby przed dodaniem zestawu.");
+            alert("Wprowadź liczby przed dodaniem zestawu.");
             return;
         }
 
@@ -159,7 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const mainNumbers = allNumbers.slice(0, currentGame.mainNumbers);
         const extraNumbers = currentGame.extraNumbers > 0 ? allNumbers.slice(currentGame.mainNumbers) : [];
 
-        // Walidacja
         if (!validateNumbers(mainNumbers, currentGame.mainNumbers, currentGame.mainPool) || 
             (currentGame.extraNumbers > 0 && !validateNumbers(extraNumbers, currentGame.extraNumbers, currentGame.extraPool))) {
             return;
@@ -177,17 +196,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function validateNumbers(numbers, requiredCount, poolSize) {
         if (numbers.length !== requiredCount) {
-            addResult(`Wprowadź dokładnie ${requiredCount} liczb.`);
+            alert(`Wprowadź dokładnie ${requiredCount} liczb.`);
             return false;
         }
         
         if (new Set(numbers).size !== requiredCount) {
-            addResult("Wszystkie liczby muszą być unikalne.");
+            alert("Wszystkie liczby muszą być unikalne.");
             return false;
         }
         
         if (numbers.some(num => num < 1 || num > poolSize)) {
-            addResult(`Liczby muszą być w zakresie od 1 do ${poolSize}.`);
+            alert(`Liczby muszą być w zakresie od 1 do ${poolSize}.`);
             return false;
         }
         
@@ -197,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function simulateDraws() {
         const numDraws = parseInt(elements.numDrawsInput.value);
         if (numDraws < 1) {
-            addResult("Podaj prawidłową liczbę losowań.");
+            alert("Podaj prawidłową liczbę losowań.");
             return;
         }
 
@@ -206,7 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const sets = getSets();
         
         if (sets.length === 0) {
-            addResult("Najpierw wygeneruj zestawy liczb.");
+            alert("Najpierw wygeneruj zestawy liczb.");
             return;
         }
 
@@ -220,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const sets = getSets();
         
         if (sets.length === 0) {
-            addResult("Najpierw wygeneruj zestawy liczb.");
+            alert("Najpierw wygeneruj zestawy liczb.");
             return;
         }
 
@@ -232,7 +251,6 @@ document.addEventListener("DOMContentLoaded", () => {
             otherWins: {}
         };
 
-        // Inicjalizacja liczników dla innych wygranych
         if (currentGame === games.lotto) {
             for (let i = 3; i <= 5; i++) {
                 results.otherWins[i] = 0;
@@ -252,7 +270,6 @@ document.addEventListener("DOMContentLoaded", () => {
             for (const userNumbers of sets) {
                 const hits = countHits(draw, userNumbers);
                 
-                // Sprawdzamy czy to główna wygrana
                 if (isJackpot(hits)) {
                     results.jackpot = {
                         drawCount: results.totalDraws,
@@ -261,10 +278,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         hits: hits
                     };
                     foundJackpot = true;
-                    break; // Przerywamy pętlę po znalezieniu pierwszej wygranej
+                    break; 
                 }
                 
-                // Zliczamy inne wygrane
                 if (currentGame === games.lotto) {
                     if (hits.main >= 3 && hits.main <= 5) {
                         results.otherWins[hits.main]++;
@@ -277,23 +293,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // Aktualizacja kosztów co 1000 losowań (dla wydajności)
             if (results.totalDraws % 1000 === 0) {
                 await new Promise(resolve => setTimeout(resolve, 0));
             }
         }
 
-        // Oblicz koszty i wygrane
         results.totalCost = results.totalDraws * sets.length * currentGame.price;
         
-        // Oblicz sumę wygranych
         if (currentGame === games.lotto) {
             for (let i = 3; i <= 5; i++) {
                 if (results.otherWins[i] > 0) {
                     results.totalWinnings += results.otherWins[i] * currentGame.prizes[i];
                 }
             }
-            // Dodaj jackpot
             results.totalWinnings += currentGame.prizes[6];
         } else {
             for (const [tier, count] of Object.entries(results.otherWins)) {
@@ -301,14 +313,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     results.totalWinnings += count * currentGame.prizes[tier];
                 }
             }
-            // Dodaj jackpot
             results.totalWinnings += currentGame.prizes['5+2'];
         }
 
         showJackpotResults(results, performance.now() - startTime, sets.length);
     }
 
-    // Funkcje pomocnicze
     function generateRandomNumbers() {
         const mainNumbers = [];
         while (mainNumbers.length < currentGame.mainNumbers) {
@@ -370,20 +380,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const hitsCounts = {};
         const jackpots = [];
 
-        // Inicjalizacja liczników
         if (currentGame === games.lotto) {
             for (let i = 2; i <= 6; i++) {
                 hitsCounts[i] = 0;
             }
         } else {
-            // Dla Eurojackpot uwzględniamy wszystkie możliwe kombinacje z wygranymi
-            const prizeTiers = [
-                '1+2', '2+1', '2+2',
-                '3+0', '3+1', '3+2',
-                '4+0', '4+1', '4+2',
-                '5+0', '5+1', '5+2'
-            ];
-            
+            const prizeTiers = ['1+2', '2+1', '2+2', '3+0', '3+1', '3+2', '4+0', '4+1', '4+2', '5+0', '5+1', '5+2'];
             prizeTiers.forEach(tier => {
                 hitsCounts[tier] = 0;
             });
@@ -394,14 +396,11 @@ document.addEventListener("DOMContentLoaded", () => {
             
             for (const userNumbers of sets) {
                 const hits = countHits(draw, userNumbers);
-
-                // Zliczanie trafień
                 let hitKey;
                 if (currentGame === games.lotto) {
                     hitKey = hits.main;
                 } else {
                     hitKey = `${hits.main}+${hits.extra}`;
-                    // Pomijamy trafienia które nie mają wygranej (np. 2+0)
                     if (hits.main === 2 && hits.extra === 0) continue;
                 }
 
@@ -409,7 +408,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     hitsCounts[hitKey]++;
                 }
 
-                // Zapisywanie jackpotów
                 if (isJackpot(hits)) {
                     jackpots.push({
                         drawCount: i + 1,
@@ -420,7 +418,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         }
-
         return { hitsCounts, jackpots };
     }
 
@@ -430,54 +427,35 @@ document.addEventListener("DOMContentLoaded", () => {
         const years = (numDraws / drawsPerYear).toFixed(2);
         const setsCount = getSets().length;
         
-        // Oblicz koszty i wygrane
         const totalCost = numDraws * setsCount * currentGame.price;
         let totalWinnings = 0;
         let winningsDetails = [];
         
         if (currentGame === games.lotto) {
-            // Oblicz wygrane dla Lotto
             for (let i = 3; i <= 6; i++) {
                 const count = results.hitsCounts[i] || 0;
                 if (count > 0) {
                     const prize = currentGame.prizes[i];
                     const winnings = count * prize;
                     totalWinnings += winnings;
-                    winningsDetails.push({
-                        label: currentGame.hitLabels[i],
-                        count: count,
-                        prize: prize,
-                        total: winnings
-                    });
+                    winningsDetails.push({ label: currentGame.hitLabels[i], count: count, prize: prize, total: winnings });
                 }
             }
         } else {
-            // Oblicz wygrane dla Eurojackpot
-            const prizeTiers = [
-                '5+2', '5+1', '5+0',
-                '4+2', '4+1', '4+0',
-                '3+2', '3+1', '3+0',
-                '2+2', '2+1', '1+2' // Uwzględniamy tylko kombinacje z wygranymi
-            ];
-            
+            const prizeTiers = ['5+2', '5+1', '5+0', '4+2', '4+1', '4+0', '3+2', '3+1', '3+0', '2+2', '2+1', '1+2'];
             prizeTiers.forEach(tier => {
                 const count = results.hitsCounts[tier] || 0;
                 if (count > 0 && currentGame.prizes[tier]) {
                     const prize = currentGame.prizes[tier];
                     const winnings = count * prize;
                     totalWinnings += winnings;
-                    winningsDetails.push({
-                        label: currentGame.hitLabels[tier],
-                        count: count,
-                        prize: prize,
-                        total: winnings
-                    });
+                    winningsDetails.push({ label: currentGame.hitLabels[tier], count: count, prize: prize, total: winnings });
                 }
             });
         }
         
         const profit = totalWinnings - totalCost;
-        const roi = (profit / totalCost * 100).toFixed(2); // Zwrot z inwestycji w %
+        const roi = (profit / totalCost * 100).toFixed(2);
 
         let html = `
             <div class="simulation-summary">
@@ -494,104 +472,49 @@ document.addEventListener("DOMContentLoaded", () => {
                     ${profit >= 0 ? '+' : ''}${formatNumber(profit)} zł (${roi}%)
                 </span>
             </div>
-        `;
-        
-        // Statystyki trafień
-        html += `<div><strong>Statystyki trafień:</strong></div>`;
+            <div><strong>Statystyki trafień:</strong></div>`;
         
         if (currentGame === games.lotto) {
-            // Dla Lotto
             for (let i = 2; i <= 6; i++) {
                 const count = results.hitsCounts[i] || 0;
                 if (count > 0) {
                     const ratio = (numDraws / count).toFixed(2);
                     const prizeInfo = i >= 3 ? ` (${currentGame.prizes[i]} zł)` : '';
                     html += `
-                        <div class="prize-tier" style="margin: 0; padding: 0; border: none; background: none;">
+                        <div style="margin: 5px 0;">
                             ${currentGame.hitLabels[i]}${prizeInfo}: <span class="hit-count">${formatNumber(count)}</span>
                             (średnio 1 na ${ratio} losowań)
-                        </div>
-                    `;
+                        </div>`;
                 }
             }
         } else {
-            // Dla Eurojackpot
-            const prizeTiers = [
-                '5+2', '5+1', '5+0',
-                '4+2', '4+1', '4+0',
-                '3+2', '3+1', '3+0',
-                '2+2', '2+1', '1+2' // Wyświetlamy tylko kombinacje z wygranymi
-            ];
-            
+            const prizeTiers = ['5+2', '5+1', '5+0', '4+2', '4+1', '4+0', '3+2', '3+1', '3+0', '2+2', '2+1', '1+2'];
             prizeTiers.forEach(tier => {
                 const count = results.hitsCounts[tier] || 0;
                 if (count > 0 && currentGame.prizes[tier]) {
                     const ratio = (numDraws / count).toFixed(2);
                     const prizeInfo = ` (${currentGame.prizes[tier]} zł)`;
                     html += `
-                        <div class="prize-tier" style="margin: 0; padding: 0; border: none; background: none;">
+                        <div style="margin: 5px 0;">
                             ${currentGame.hitLabels[tier]}${prizeInfo}: <span class="hit-count">${formatNumber(count)}</span>
                             (średnio 1 na ${ratio} losowań)
-                        </div>
-                    `;
+                        </div>`;
                 }
             });
         }
 
-        // Szczegóły wygranych
-        if (winningsDetails.length > 0) {
-            html += `<div style="margin-top: 15px;"><strong>Szczegóły wygranych:</strong></div>`;
-            winningsDetails.forEach(detail => {
-                html += `
-                    <div style="margin: 5px 0;">
-                        ${detail.label}: ${detail.count} × ${detail.prize} zł = <strong>${detail.total} zł</strong>
-                    </div>
-                `;
+        if (results.jackpots.length > 0) {
+            html += `<div style="margin-top: 20px;"><strong class="highlight">GŁÓWNE WYGRANE:</strong></div>`;
+            results.jackpots.sort((a, b) => a.drawCount - b.drawCount).forEach((jackpot, i) => {
+                html += `<div style="margin-top: 10px;">
+                    <span class="highlight">${getHitLabel(jackpot.hits)}</span> po ${formatNumber(jackpot.drawCount)} losowaniach (${jackpot.years.toFixed(2)} lat): 
+                    <span class="numbers">${formatNumbers(jackpot.numbers)}</span>
+                </div>`;
             });
         }
 
-        // Jackpoty
-        if (results.jackpots.length > 0) {
-            html += `<div style="margin-top: 20px;"><strong class="highlight">GŁÓWNE WYGRANE:</strong></div>`;
-            let previousYears = 0;
-            const yearDifferences = [];
-            
-            results.jackpots.sort((a, b) => a.drawCount - b.drawCount)
-                .forEach((jackpot, i) => {
-                    const years = jackpot.years.toFixed(2);
-                    const yearsDiff = (i === 0) ? parseFloat(years) : (jackpot.years - previousYears);
-                    if (i > 0) yearDifferences.push(yearsDiff);
-                    
-                    let resultText = `<span class="highlight">${getHitLabel(jackpot.hits)}</span> po ${formatNumber(jackpot.drawCount)} losowaniach (${years} lat`;
-                    
-                    if (i > 0) {
-                        resultText += `, +${yearsDiff.toFixed(2)} lat od poprzedniej`;
-                    }
-                    
-                    resultText += `): <span class="numbers">${formatNumbers(jackpot.numbers)}</span>`;
-                    
-                    html += `<div style="margin-top: 10px;">${resultText}</div>`;
-                    previousYears = jackpot.years;
-                });
-
-            // Dodaj statystyki odstępów między jackpotami
-            if (yearDifferences.length > 0) {
-                const minDiff = Math.min(...yearDifferences).toFixed(2);
-                const maxDiff = Math.max(...yearDifferences).toFixed(2);
-                const avgDiff = (yearDifferences.reduce((a, b) => a + b, 0) / yearDifferences.length).toFixed(2);
-                
-                html += `
-                    <div style="margin-top: 15px; background-color: #f0f8ff; padding: 8px; border-radius: 3px;">
-                        <strong>Statystyki odstępów między głównymi wygranymi:</strong><br>
-                        Najkrótszy odstęp: ${minDiff} lat<br>
-                        Najdłuższy odstęp: ${maxDiff} lat<br>
-                        Średni odstęp: ${avgDiff} lat
-                    </div>
-                `;
-            }
-        }
-
         elements.resultsContainer.innerHTML = html;
+        showResultsView(); // Przełącz na widok wyników
     }
 
     function showJackpotResults(results, timeMs, setsCount) {
@@ -619,51 +542,41 @@ document.addEventListener("DOMContentLoaded", () => {
             <div style="margin-top: 10px;">
                 <span class="highlight">${getHitLabel(results.jackpot.hits)}</span> po ${formatNumber(results.jackpot.drawCount)} losowaniach (${results.jackpot.years.toFixed(2)} lat):
                 <span class="numbers">${formatNumbers(results.jackpot.numbers)}</span>
-            </div>
-        `;
+            </div>`;
 
-        // Dodaj informacje o innych wygranych
         if (Object.values(results.otherWins).some(count => count > 0)) {
             html += `<div style="margin-top: 20px;"><strong>Inne wygrane podczas symulacji:</strong></div>`;
-            
             if (currentGame === games.lotto) {
                 for (let i = 3; i <= 5; i++) {
                     if (results.otherWins[i] > 0) {
-                        html += `
-                            <div style="margin: 5px 0;">
-                                ${currentGame.hitLabels[i]}: ${results.otherWins[i]} × ${currentGame.prizes[i]} zł = <strong>${results.otherWins[i] * currentGame.prizes[i]} zł</strong>
-                            </div>
-                        `;
+                        html += `<div>${currentGame.hitLabels[i]}: ${results.otherWins[i]}</div>`;
                     }
                 }
             } else {
                 for (const [tier, count] of Object.entries(results.otherWins)) {
                     if (count > 0 && currentGame.prizes[tier]) {
-                        html += `
-                            <div style="margin: 5px 0;">
-                                ${currentGame.hitLabels[tier]}: ${count} × ${currentGame.prizes[tier]} zł = <strong>${count * currentGame.prizes[tier]} zł</strong>
-                            </div>
-                        `;
+                        html += `<div>${currentGame.hitLabels[tier]}: ${count}</div>`;
                     }
                 }
             }
         }
 
         elements.resultsContainer.innerHTML = html;
+        showResultsView(); // Przełącz na widok wyników
     }
 
     function getSets() {
         return Array.from(elements.setsContainer.children)
             .filter(el => el.textContent.includes(":"))
             .map(el => {
-                const text = el.textContent.replace(/<[^>]*>/g, '').split(": ")[1];
+                const text = el.innerHTML.replace(/<[^>]*>/g, '').split(": ")[1];
                 const parts = text.split(" | ");
                 const mainNumbers = parts[0].split(", ").map(Number);
                 const extraNumbers = parts.length > 1 ? parts[1].split(", ").map(Number) : [];
                 return { main: mainNumbers, extra: extraNumbers };
             });
     }
-
+    
     function clearResults() {
         elements.resultsContainer.innerHTML = "";
     }
@@ -678,13 +591,9 @@ document.addEventListener("DOMContentLoaded", () => {
         clearSets();
     }
 
-    function addResult(text) {
-        elements.resultsContainer.innerHTML += text + "<br>";
-    }
-
-    function addSet(text) {
+    function addSet(html) {
         const div = document.createElement("div");
-        div.innerHTML = text;
+        div.innerHTML = html;
         elements.setsContainer.appendChild(div);
     }
 
