@@ -153,7 +153,6 @@
             padding: 1rem;
             margin-top: 0.5rem;
             border-radius: 5px;
-            /* ZMIANA 1: Ponowne zmniejszenie czcionki dla większej zwartości */
             font-size: 0.8rem; 
             line-height: 1.5;
         }
@@ -163,7 +162,6 @@
         .numbers { 
             font-family: monospace; 
             color: #0066cc; 
-            /* ZMIANA 2: Dostosowanie rozmiaru czcionki numerów */
             font-size: 0.85rem; 
         }
         .hit-count { font-weight: bold; color: var(--success-color); }
@@ -173,6 +171,23 @@
             padding: 1rem;
             border-radius: 5px;
             margin-bottom: 1rem;
+        }
+
+        /* NOWY FRAGMENT: Styl dla stopki */
+        .app-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .app-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .app-footer a:hover {
+            text-decoration: underline;
         }
         
         /* --- MEDIA QUERY FOR MOBILE --- */
@@ -224,7 +239,6 @@
                     <label for="numDraws">Liczba losowań:</label>
                     <input type="number" id="numDraws" min="1" max="1000000000" value="156">
                     
-                    <!-- ZMIANA 3: Usunięto przycisk "Wyczyść wyniki" -->
                     <div class="button-group">
                         <button id="drawButton" disabled>Losuj</button>
                     </div>
@@ -244,6 +258,13 @@
             <div id="results"></div>
             <button id="backToSettingsButton" class="button-secondary" style="margin-top: 1rem;">Powrót do ustawień</button>
         </div>
+
+        <!-- NOWY FRAGMENT: Stopka z podpisem (umieszczona wewnątrz #main-container, ale poza widokami) -->
+        <footer class="app-footer">
+            <p>Symulator stworzony przez <strong>Łukasz Stężycki</strong>. © 2024</p>
+            <!-- Możesz też dodać link do swojego portfolio lub GitHub, np: -->
+            <!-- <p><a href="https://github.com/twoj-profil" target="_blank">Zobacz kod na GitHub</a></p> -->
+        </footer>
 
     </div>
     
