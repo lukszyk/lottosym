@@ -42,7 +42,6 @@
             box-sizing: border-box;
         }
 
-        /* --- NOWY STYL: Ukrywanie widoku wyników domyślnie --- */
         #results-view {
             display: none;
         }
@@ -136,7 +135,7 @@
         }
 
         /* --- Result & Sets Areas --- */
-        #generatedSets, #results {
+        #generatedSets {
             background-color: var(--bg-light);
             border: 1px solid var(--border-color);
             overflow-y: auto;
@@ -145,13 +144,29 @@
             border-radius: 5px;
             font-size: 0.9rem;
             line-height: 1.5;
+            max-height: 320px;
         }
-        #generatedSets { max-height: 320px; }
-        #results { max-height: 90vh; } /* Zwiększona wysokość, bo to główny element widoku */
+        
+        #results {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            margin-top: 0.5rem;
+            border-radius: 5px;
+            /* ZMIANA 1: Usunięto max-height i overflow, aby pozbyć się podwójnego scrolla */
+            /* ZMIANA 2: Zmniejszono bazową czcionkę dla wyników */
+            font-size: 0.85rem; 
+            line-height: 1.5;
+        }
 
         /* --- Result Highlighting --- */
         .highlight { color: var(--danger-color); font-weight: bold; }
-        .numbers { font-family: monospace; color: #0066cc; font-size: 1rem; }
+        .numbers { 
+            font-family: monospace; 
+            color: #0066cc; 
+            /* ZMIANA 3: Lekko zmniejszono czcionkę numerów, aby pasowała do reszty */
+            font-size: 0.9rem; 
+        }
         .hit-count { font-weight: bold; color: var(--success-color); }
         
         .simulation-summary {
