@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Symulator Lotto/Eurojackpot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        #main-container {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            width: 900px;
+            max-width: 100%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .game-switcher {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+            gap: 5px;
+        }
+        .game-switcher button {
+            padding: 6px 10px;
+            font-size: 0.85em;
+            border-radius: 4px;
+            flex: 1;
+        }
+        .game-switcher .active {
+            background-color: #28a745;
+        }
+        h1 {
+            font-size: 1.3em;
+            margin: 5px 0;
+            text-align: center;
+            color: #333;
+        }
+        .game-rules {
+            font-size: 0.75em;
+            margin-bottom: 8px;
+            text-align: center;
+            color: #666;
+        }
+        .control-panel {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .control-column {
+            flex: 1;
+        }
+        .sets-column {
+            width: 240px;
+        }
+        label {
+            display: block;
+            font-size: 0.75em;
+            margin-top: 6px;
+            color: #555;
+        }
+        input[type="number"], 
+        input[type="text"], 
+        select {
+            width: 100%;
+            padding: 7px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            margin: 2px 0 8px 0;
+            box-sizing: border-box;
+            font-size: 0.85em;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 7px;
+            font-size: 0.85em;
+            border-radius: 3px;
+            margin: 6px 0;
+            width: 100%;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .button-danger {
+            background-color: #dc3545;
+        }
+        .button-danger:hover {
+            background-color: #c82333;
+        }
+        .button-group {
+            display: flex;
+            gap: 5px;
+            margin: 6px 0;
+        }
+        .button-group button {
+            margin: 0;
+        }
+        #generatedSets {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            max-height: 275px;
+            overflow-y: auto;
+            padding: 8px;
+            margin: 6px 0;
+            border-radius: 3px;
+            font-size: 0.8em;
+            line-height: 1.4;
+        }
+        #results {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            max-height: 1250px;
+            overflow-y: auto;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            line-height: 1.4;
+        }
+        .highlight {
+            color: #d9534f;
+            font-weight: bold;
+        }
+        .numbers {
+            font-family: monospace;
+            color: #0066cc;
+        }
+        .hit-count {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .simulation-summary {
+            background-color: #e9f7ef;
+            padding: 8px;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            font-size: 0.85em;
+        }
+        .prize-tier {
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px dotted #ddd;
+            font-size: 0.85em;
+        }
+        @media (max-width: 768px) {
+            .control-panel {
+                flex-direction: column;
+            }
+            .sets-column {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="main-container">
+        <div class="game-switcher">
+            <button id="switchLotto" class="active">LOTTO</button>
+            <button id="switchEurojackpot">EUROJACKPOT</button>
+        </div>
+        
+        <h1 id="gameTitle">Symulator Lotto</h1>
+        <div class="game-rules" id="gameRules">6 liczb z 49</div>
+        
+        <div class="control-panel">
+            <div class="control-column">
+                <label for="numSets">Liczba zestawów:</label>
+                <input type="number" id="numSets" min="1" max="1000" value="1">
+                
+                <div class="button-group">
+                    <button id="clearSetsButton" class="button-danger">Wyczyść zestawy</button>
+                    <button id="generateSetsButton">Generuj zestawy</button>
+                </div>
+                
+                <label for="userNumbers">Twój zestaw (oddziel przecinkami):</label>
+                <input type="text" id="userNumbers" placeholder="np. 5, 12, 18, 24, 35, 42">
+                <button id="ownSetsButton">Dodaj własne</button>
+                
+                <div class="row">
+                    <label for="drawYears">Liczba lat losowań:</label>
+                    <select id="drawYears">
+                        <option value="custom">Własna liczba</option>
+                        <option value="1">1 rok</option>
+                        <option value="10">10 lat</option>
+                        <option value="50">50 lat</option>
+                        <option value="100">100 lat</option>
+                        <option value="1000">1000 lat</option>
+                        <option value="10000">10000 lat</option>
+                    </select>
+
+                    <label for="numDraws">Liczba losowań:</label>
+                    <input type="number" id="numDraws" min="1" max="1000000000" value="100">
+                </div>
+
+                <style>
+                    .row {
+                        display: flex;
+                        gap: 10px;
+                        align-items: center;
+                    }
+                </style>
+                
+                <div class="button-group">
+                    <button id="drawButton" disabled>Losuj</button>
+                    <button id="clearResultsButton" class="button-danger">Wyczyść wyniki</button>
+                </div>
+                <button id="drawUntil6Button" disabled>Losuj aż trafisz główną wygraną</button>
+            </div>
+            
+            <div class="control-column sets-column">
+                <h2 style="font-size:1.1em;margin:5px 0;">Wylosowane zestawy:</h2>
+                <div id="generatedSets"></div>
+            </div>
+        </div>
+        
+        <h2 style="font-size:1.1em;margin:5px 0;">Wyniki symulacji:</h2>
+        <div id="results"></div>
+    </div>
+    <script src="lotto.js"></script>
+</body>
+</html>
