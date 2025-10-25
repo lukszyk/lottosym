@@ -415,7 +415,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         hits: hits
                     });
                 }
-            }
+            if (i % 10000 === 0) {
+            await new Promise(resolve => setTimeout(resolve, 0));
+        }}
         }
         return { hitsCounts, jackpots };
     }
@@ -618,3 +620,4 @@ document.addEventListener("DOMContentLoaded", () => {
         elements.drawYearsSelect.value = "custom";
     }
 });
+
