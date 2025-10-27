@@ -30,7 +30,7 @@
             min-height: 100vh;
             font-size: 16px;
         }
-        
+
         #main-container {
             background-color: #fff;
             border: 1px solid var(--border-color);
@@ -38,7 +38,7 @@
             padding: 1rem;
             width: 100%;
             max-width: 900px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
         }
 
@@ -52,8 +52,14 @@
             color: var(--text-primary);
             margin: 0.5rem 0 1rem 0;
         }
-        h1 { font-size: 1.5rem; }
-        h2 { font-size: 1.2rem; }
+
+        h1 {
+            font-size: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+        }
 
         .game-rules {
             font-size: 0.9rem;
@@ -75,14 +81,31 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        button:hover { background-color: var(--primary-hover); }
-        button:disabled { background-color: #ccc; cursor: not-allowed; }
 
-        .button-danger { background-color: var(--danger-color); }
-        .button-danger:hover { background-color: var(--danger-hover); }
-        
-        .button-secondary { background-color: var(--secondary-color); }
-        .button-secondary:hover { background-color: var(--secondary-hover); }
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .button-danger {
+            background-color: var(--danger-color);
+        }
+
+        .button-danger:hover {
+            background-color: var(--danger-hover);
+        }
+
+        .button-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .button-secondary:hover {
+            background-color: var(--secondary-hover);
+        }
 
         .game-switcher {
             display: flex;
@@ -90,16 +113,19 @@
             margin-bottom: 1rem;
             gap: 0.5rem;
         }
+
         .game-switcher button {
             background-color: #e9ecef;
             color: var(--text-primary);
             font-weight: normal;
         }
+
         .game-switcher .active {
             background-color: var(--success-color);
             color: white;
             font-weight: bold;
         }
+
         .button-group {
             display: flex;
             gap: 0.5rem;
@@ -114,8 +140,9 @@
             color: #555;
             font-weight: bold;
         }
-        input[type="number"], 
-        input[type="text"], 
+
+        input[type="number"],
+        input[type="text"],
         select {
             width: 100%;
             padding: 0.6rem;
@@ -124,6 +151,10 @@
             margin-top: 0.25rem;
             box-sizing: border-box;
             font-size: 1rem;
+        }
+        
+        input:disabled {
+            background-color: #eee;
         }
 
         /* --- Layout --- */
@@ -146,26 +177,34 @@
             line-height: 1.5;
             max-height: 320px;
         }
-        
+
         #results {
             background-color: var(--bg-light);
             border: 1px solid var(--border-color);
             padding: 1rem;
             margin-top: 0.5rem;
             border-radius: 5px;
-            font-size: 0.8rem; 
+            font-size: 0.8rem;
             line-height: 1.5;
         }
 
         /* --- Result Highlighting --- */
-        .highlight { color: var(--danger-color); font-weight: bold; }
-        .numbers { 
-            font-family: monospace; 
-            color: #0066cc; 
-            font-size: 0.85rem; 
+        .highlight {
+            color: var(--danger-color);
+            font-weight: bold;
         }
-        .hit-count { font-weight: bold; color: var(--success-color); }
-        
+
+        .numbers {
+            font-family: monospace;
+            color: #0066cc;
+            font-size: 0.85rem;
+        }
+
+        .hit-count {
+            font-weight: bold;
+            color: var(--success-color);
+        }
+
         .simulation-summary {
             background-color: #e9f7ef;
             padding: 1rem;
@@ -173,7 +212,7 @@
             margin-bottom: 1rem;
         }
 
-        /* NOWY FRAGMENT: Styl dla stopki */
+        /* --- Styl dla stopki --- */
         .app-footer {
             text-align: center;
             margin-top: 2rem;
@@ -182,92 +221,120 @@
             font-size: 0.75rem;
             color: var(--text-secondary);
         }
+
         .app-footer a {
             color: var(--primary-color);
             text-decoration: none;
         }
+
         .app-footer a:hover {
             text-decoration: underline;
         }
-        
+
         /* --- MEDIA QUERY FOR MOBILE --- */
         @media (max-width: 768px) {
-            body { padding: 0.5rem; font-size: 14px; }
-            #main-container { padding: 0.75rem; }
-            .control-panel { grid-template-columns: 1fr; gap: 1rem; }
-            .sets-column { margin-top: 1rem; }
-            #generatedSets { max-height: 200px; }
+            body {
+                padding: 0.5rem;
+                font-size: 14px;
+            }
+
+            #main-container {
+                padding: 0.75rem;
+            }
+
+            .control-panel {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .sets-column {
+                margin-top: 1rem;
+            }
+
+            #generatedSets {
+                max-height: 200px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="main-container">
+<div id="main-container">
 
-        <!-- WIDOK 1: USTAWIENIA (widoczny domyślnie) -->
-        <div id="settings-view">
-            <div class="game-switcher">
-                <button id="switchLotto" class="active">LOTTO</button>
-                <button id="switchEurojackpot">EUROJACKPOT</button>
-            </div>
-            
-            <h1 id="gameTitle">Symulator Lotto</h1>
-            <div class="game-rules" id="gameRules">6 liczb z 49</div>
-            
-            <div class="control-panel">
-                <div class="control-column">
-                    <label for="numSets">Liczba zestawów do wygenerowania:</label>
-                    <input type="number" id="numSets" min="1" max="1000" value="1">
-                    <div class="button-group">
-                        <button id="generateSetsButton">Generuj losowe</button>
-                        <button id="clearSetsButton" class="button-danger">Wyczyść zestawy</button>
-                    </div>
-                    
-                    <label for="userNumbers">Twój zestaw (oddziel przecinkami):</label>
-                    <input type="text" id="userNumbers" placeholder="np. 5, 12, 18, 24, 35, 42">
-                    <button id="ownSetsButton" style="margin-top: 0.5rem;">Dodaj własny zestaw</button>
-                    
-                    <label for="drawYears">Okres symulacji:</label>
-                    <select id="drawYears">
-                        <option value="custom">Własna liczba losowań</option>
-                        <option value="1">1 rok</option>
-                        <option value="10">10 lat</option>
-                        <option value="100">100 lat</option>
-                        <option value="1000">1000 lat</option>
-                        <option value="10000">10 000 lat</option>
-                    </select>
+    <!-- WIDOK 1: USTAWIENIA (widoczny domyślnie) -->
+    <div id="settings-view">
+        <div class="game-switcher">
+            <button id="switchLotto" class="active">LOTTO</button>
+            <button id="switchEurojackpot">EUROJACKPOT</button>
+        </div>
 
-                    <label for="numDraws">Liczba losowań:</label>
-                    <input type="number" id="numDraws" min="1" max="1000000000" value="156">
-                    
-                    <div class="button-group">
-                        <button id="drawButton" disabled>Losuj</button>
-                    </div>
-                    <button id="drawUntil6Button" disabled style="margin-top: 0.5rem;">Losuj aż trafisz główną wygraną</button>
+        <h1 id="gameTitle">Symulator Lotto</h1>
+        <div class="game-rules" id="gameRules">6 liczb z 49</div>
+
+        <div class="control-panel">
+            <div class="control-column">
+                <label for="numSets">Liczba zestawów do wygenerowania:</label>
+                <input type="number" id="numSets" min="1" max="1000" value="1">
+                <div class="button-group">
+                    <button id="generateSetsButton">Generuj losowe</button>
+                    <button id="clearSetsButton" class="button-danger">Wyczyść zestawy</button>
+                </div>
+
+                <label for="userNumbers">Twój zestaw (oddziel przecinkami):</label>
+                <input type="text" id="userNumbers" placeholder="np. 5, 12, 18, 24, 35, 42">
+                <button id="ownSetsButton" style="margin-top: 0.5rem;">Dodaj własny zestaw</button>
+
+                <label for="drawYears">Okres symulacji:</label>
+                <select id="drawYears">
+                    <option value="custom">Własna liczba losowań</option>
+                    <option value="1">1 rok</option>
+                    <option value="10">10 lat</option>
+                    <option value="100">100 lat</option>
+                    <option value="1000">1000 lat</option>
+                    <option value="10000">10 000 lat</option>
+                </select>
+
+                <label for="numDraws">Liczba losowań:</label>
+                <input type="number" id="numDraws" min="1" max="1000000000" value="156">
+
+                <div class="button-group">
+                    <button id="drawButton" disabled>Losuj</button>
                 </div>
                 
-                <div class="control-column sets-column">
-                    <h2>Wprowadzone zestawy:</h2>
-                    <div id="generatedSets"></div>
+                <!-- START NOWEGO FRAGMENTU - WSKAŹNIK POSTĘPU -->
+                <div id="progress-container" style="display: none; margin-top: 1rem;">
+                    <label id="progress-label">Postęp symulacji:</label>
+                    <progress id="progress-bar" value="0" max="100" style="width: 100%;"></progress>
+                    <div id="progress-text" style="text-align: center; font-size: 0.9rem; margin-top: 0.25rem;"></div>
                 </div>
+                <!-- KONIEC NOWEGO FRAGMENTU -->
+                
+                <button id="drawUntil6Button" disabled style="margin-top: 0.5rem;">Losuj aż trafisz główną wygraną</button>
+            </div>
+
+            <div class="control-column sets-column">
+                <h2>Wprowadzone zestawy:</h2>
+                <div id="generatedSets"></div>
             </div>
         </div>
-
-        <!-- WIDOK 2: WYNIKI (ukryty domyślnie) -->
-        <div id="results-view">
-            <h2>Wyniki symulacji:</h2>
-            <div id="results"></div>
-            <button id="backToSettingsButton" class="button-secondary" style="margin-top: 1rem;">Powrót do ustawień</button>
-        </div>
-
-        <!-- NOWY FRAGMENT: Stopka z podpisem (umieszczona wewnątrz #main-container, ale poza widokami) -->
-        <footer class="app-footer">
-            <p>Symulator stworzony przez <strong>Łukasz Stężycki</strong>. © 2024</p>
-            <!-- Możesz też dodać link do swojego portfolio lub GitHub, np: -->
-            <!-- <p><a href="https://github.com/twoj-profil" target="_blank">Zobacz kod na GitHub</a></p> -->
-        </footer>
-
     </div>
-    
-    <script src="lotto.js"></script>
+
+    <!-- WIDOK 2: WYNIKI (ukryty domyślnie) -->
+    <div id="results-view">
+        <h2>Wyniki symulacji:</h2>
+        <div id="results"></div>
+        <button id="backToSettingsButton" class="button-secondary" style="margin-top: 1rem;">Powrót do ustawień</button>
+    </div>
+
+    <!-- Stopka z podpisem (umieszczona wewnątrz #main-container, ale poza widokami) -->
+    <footer class="app-footer">
+        <p>Symulator stworzony przez <strong>Łukasz Stężycki</strong>. © 2024</p>
+        <!-- Możesz też dodać link do swojego portfolio lub GitHub, np: -->
+        <!-- <p><a href="https://github.com/twoj-profil" target="_blank">Zobacz kod na GitHub</a></p> -->
+    </footer>
+
+</div>
+
+<script src="lotto.js"></script>
+
 </body>
 </html>
